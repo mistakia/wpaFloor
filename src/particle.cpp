@@ -8,8 +8,9 @@
 #include "particle.hpp"
 
 //------------------------------------------------------------------
-Particle::Particle(){
+Particle::Particle(ofParameterGroup & particleParameters){
     attractPoints = NULL;
+    parameters = particleParameters;
 }
 
 //------------------------------------------------------------------
@@ -33,7 +34,7 @@ void Particle::reset(int peerId){
     
     scale = ofRandom(0.5, 1.0);
     
-    drag  = ofRandom(0.65, 0.9);
+    drag  = ofRandom(parameters.getFloat("dragMin"), parameters.getFloat("dragMax"));
 }
 
 //------------------------------------------------------------------
@@ -64,13 +65,13 @@ void Particle::update(){
             frc = closestPt - pos;
             
             //lets also limit our attraction to a certain distance and don't apply if 'f' key is pressed
-            if( dist > 100 && !ofGetKeyPressed('f')){
-                vel += frc * 0.03;
+            if( dist > parameters.getInt("gravity distance") && !ofGetKeyPressed('f')){
+                vel += frc * parameters.getFloat("gravity");
             } else {
                 //if the particles are not close to us, lets add a little bit of random movement using noise. this is where uniqueVal comes in handy.
-                frc.x = ofSignedNoise(uniqueVal, pos.y * 0.01, ofGetElapsedTimef()*0.2);
-                frc.y = ofSignedNoise(uniqueVal, pos.x * 0.01, ofGetElapsedTimef()*0.2);
-                vel += frc * 1.03;
+                frc.x = ofSignedNoise(uniqueVal, pos.y * parameters.getFloat("noise position"), ofGetElapsedTimef() * parameters.getFloat("noise time"));
+                frc.y = ofSignedNoise(uniqueVal, pos.x * parameters.getFloat("noise position"), ofGetElapsedTimef() * parameters.getFloat("noise time"));
+                vel += frc * parameters.getFloat("noise force");
             }
             
         }
@@ -120,7 +121,7 @@ void Particle::findPeer(vector <Particle> & allPeers) {
         }
         
         float distance = (pos - peer.pos).length();
-        if (distance < 150 && peer.peerIds.size() < 6) {
+        if (distance < 150 && peer.peerIds.size() < parameters.getInt("connections")) {
             peerIds.push_back(i);
             allPeers[i].peerIds.push_back(id);
             return;
@@ -139,9 +140,8 @@ void Particle::updatePeers(vector <Particle> & allPeers){
             findPeer(allPeers);
         }
     }
-    
-    if (peerIds.size() < 6) {
-        for (unsigned int i = peerIds.size(); i < 6; i++) {
+    if (peerIds.size() < parameters.getInt("connections")) {
+        for (unsigned int i = peerIds.size(); i < parameters.getInt("connections"); i++) {
             findPeer(allPeers);
         }
     }
@@ -149,13 +149,13 @@ void Particle::updatePeers(vector <Particle> & allPeers){
 
 //------------------------------------------------------------------
 void Particle::draw(vector <Particle> & allPeers){
-    ofSetColor(208, 255, 63);
+    ofSetColor(parameters.getColor("color"));
     ofDrawCircle(pos.x, pos.y, scale * 4.0);
     
     for (unsigned int i = 0; i < peerIds.size(); i++) {
         int peerId = peerIds[i];
         ofPoint peerPos = allPeers[peerId].pos;
-        ofSetColor(208, 255, 63);
+        ofSetColor(parameters.getColor("color"));
         ofDrawLine(pos.x, pos.y, peerPos.x, peerPos.y);
     }
 }
