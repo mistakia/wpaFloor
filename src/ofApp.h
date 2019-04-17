@@ -28,10 +28,11 @@ public:
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
     void paramsChanged(ofAbstractParameter & parameter);
+    void colorChanged(ofColor & color);
+    void radiusChanged(int & radius);
 
     bool bHide;
     bool bThreshWithOpenCV;
-    bool bDrawPointCloud;
     int angle;
     vector <Particle> p;
     vector <ofPoint> attractPoints;
@@ -43,17 +44,22 @@ public:
     ofParameter <float> noiseTime;
     ofParameter <float> noiseForce;
     ofParameter <int> connections;
+    ofParameter <int> connectionLength;
     ofParameter <float> gravity;
     ofParameter <int> gravityDistance;
+    ofParameter <float> repel;
+    ofParameter <int> repelDistance;
     ofParameter <float> attractFactor;
+    ofParameter <int> nodeSize;
     ofParameter <ofColor> color;
+    ofParameter <ofColor> color2;
+    ofParameter <int> radius;
     ofParameterGroup particleParameters;
 
     ofParameter <int> nearThreshold;
     ofParameter <int> farThreshold;
     ofParameterGroup kinectParameters;
 
-    ofxIntSlider radius;
     ofxPanel gui;
 
     ofxSyphonServer mainOutputSyphonServer;

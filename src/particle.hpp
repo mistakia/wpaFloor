@@ -13,33 +13,35 @@
 #pragma once
 #include "ofMain.h"
 #include "ofxOpenCv.h"
+#include "ofxColorGradient.h"
 
 class Particle{
 
 public:
-  Particle(ofParameterGroup & particleParameters);
+    Particle(ofParameterGroup & particleParameters);
 
-  void setAttractPoints( vector <ofPoint> * attract );
+    void setAttractPoints( vector <ofPoint> * attract );
 
-  void reset(int peerId);
-  void update(ofxCvContourFinder & contourFinder);
-  void updatePeers(vector <Particle> & allPeers);
-  void findPeer(vector <Particle> & allPeers);
-  void draw(vector <Particle> & allPeers);
+    void reset(int peerId);
+    void update(ofxCvContourFinder & contourFinder);
+    void updatePeers(vector <Particle> & allPeers);
+    void findPeer(vector <Particle> & allPeers);
+    void draw(vector <Particle> & allPeers);
 
-  ofParameterGroup parameters;
+    ofParameterGroup parameters;
 
-  ofPoint pos;
-  ofPoint vel;
-  ofPoint frc;
+    ofPoint pos;
+    ofPoint vel;
+    ofPoint frc;
 
-  int id;
-  float drag;
-  float uniqueVal;
-  float scale;
+    int id;
+    float drag;
+    float uniqueVal;
+    ofColor color;
+    float scale;
 
-  vector <ofPoint> * attractPoints;
-  vector <int> peerIds;
+    vector <ofPoint> * attractPoints;
+    vector <int> peerIds;
 };
 
 #endif /* particle_hpp */

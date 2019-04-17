@@ -6,15 +6,24 @@
 		<noise_time>0.0612245</noise_time>
 		<noise_position>0.112245</noise_position>
 		<noise_force>2.65306</noise_force>
-		<connections>6</connections>
+		<connections>8</connections>
 		<gravity>0.0140816</gravity>
-		<gravity_distance>106</gravity_distance>
-		<color>89, 169, 255, 255</color>
-		<attract_factor>71.4286</attract_factor>
+		<gravity_distance>50</gravity_distance>
+		<color>128, 204, 208, 255</color>
+		<attract_factor>107.143</attract_factor>
+		<repel_distance>105</repel_distance>
+		<repel_force>4.77041</repel_force>
+		<node_size>4</node_size>
+		<color_2>30, 39, 78, 255</color_2>
+		<connection_length>150</connection_length>
+		<radius>244</radius>
 	</particles>
-	<radius>266</radius>
 	<group>
 		<near_threshold>255</near_threshold>
 		<far_threshold>141</far_threshold>
 	</group>
+	<kinect>
+		<near_threshold>230</near_threshold>
+		<far_threshold>70</far_threshold>
+	</kinect>
 </group>

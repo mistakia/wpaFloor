@@ -1,3 +1,4 @@
+ofxColorGradient
 ofxGui
 ofxKinect
 ofxOpenCv

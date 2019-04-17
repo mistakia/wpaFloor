@@ -17,7 +17,9 @@ void ofApp::setup(){
 	//kinect.init(false, false); // disable video image (faster fps)
     kinect.open();		// opens first available kinect
 
-    //radius.addListener(this, &ofApp::radiusChanged);
+    radius.addListener(this, &ofApp::radiusChanged);
+    color.addListener(this, &ofApp::colorChanged);
+    color2.addListener(this, &ofApp::colorChanged);
     //ofAddListener(particleParameters.parameterChangedE(), this, &ofApp::paramsChanged);
 
     particleParameters.setName("particles");
@@ -27,18 +29,24 @@ void ofApp::setup(){
     particleParameters.add(noisePosition.set("noise position", 0.01, 0.0, 1.0));
     particleParameters.add(noiseForce.set("noise force", 1.03, 0.0, 5.0));
     particleParameters.add(connections.set("connections", 6, 1, 25));
+    particleParameters.add(connectionLength.set("connection length", 150, 10, 1000));
     particleParameters.add(gravity.set("gravity", 0.015, 0.0, 0.03));
-    particleParameters.add(gravityDistance.set("gravity distance", 100, 50, 300));
+    particleParameters.add(gravityDistance.set("gravity distance", 100, 1, 300));
+    particleParameters.add(repelDistance.set("repel distance", 150, 1, 500));
+    particleParameters.add(repel.set("repel force", 3.5, 0.0, 5.0));
     particleParameters.add(attractFactor.set("attract factor", 12.0, 0.0, 500.0));
+    particleParameters.add(nodeSize.set("node size", 4, 2, 60));
     particleParameters.add(color.set("color", ofColor::white));
+    particleParameters.add(color2.set("color 2", ofColor::white));
+    particleParameters.add(radius.set("radius", 240, 10, 600));
 
+    kinectParameters.setName("kinect");
     kinectParameters.add(nearThreshold.set("near threshold", 230, 0, 255));
     kinectParameters.add(farThreshold.set("far threshold", 70, 0, 255));
 
     gui.setup();
     gui.add(particleParameters);
     gui.add(kinectParameters);
-    gui.add(radius.setup("radius", 240, 10, 600));
 
 	colorImg.allocate(kinect.width, kinect.height);
 	grayImage.allocate(kinect.width, kinect.height);
@@ -54,14 +62,22 @@ void ofApp::setup(){
 	angle = 0;
 	kinect.setCameraTiltAngle(angle);
 
-    int num = 1200;
+    int num = 1400;
     p.assign(num, Particle(particleParameters));
     resetParticles();
 
     bHide = false;
 }
 
+void ofApp::colorChanged(ofColor &color) {
+    resetParticles();
+}
+
 void ofApp::paramsChanged(ofAbstractParameter &parameter) {
+    resetParticles();
+}
+
+void ofApp::radiusChanged(int & radius) {
     resetParticles();
 }
 
@@ -153,7 +169,7 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    ofBackgroundGradient(ofColor(60,60,60), ofColor(10,10,10));
+    ofBackground(ofColor::black);
 
     //ofSetColor(255, 255, 255);
     //kinect.drawDepth(0, 0, ofGetWidth(), ofGetHeight());

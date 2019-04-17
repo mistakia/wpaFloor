@@ -35,6 +35,11 @@ void Particle::reset(int peerId){
     scale = ofRandom(0.5, 1.0);
 
     drag  = ofRandom(parameters.getFloat("dragMin"), parameters.getFloat("dragMax"));
+
+    ofxColorGradient<ofColor> gradient;
+    gradient.addColor(parameters.getColor("color"));
+    gradient.addColor(parameters.getColor("color 2"));
+    color = gradient.getColorAtPercent(ofRandom(0.0, 100.0));
 }
 
 //------------------------------------------------------------------
@@ -90,8 +95,8 @@ void Particle::update(ofxCvContourFinder & contourFinder){
         float dist = frc.length();
         frc.normalize();
 
-        if( dist < 150 ){
-          vel += -frc * 3.5; //notice the frc is negative
+        if (dist < parameters.getInt("repel distance")) {
+            vel += -frc * parameters.getFloat("repel force"); //notice the frc is negative
         }
       }
     } else {
@@ -102,8 +107,8 @@ void Particle::update(ofxCvContourFinder & contourFinder){
       float dist = frc.length();
       frc.normalize();
 
-      if( dist < 150 ){
-        vel += -frc * 3.5; //notice the frc is negative
+      if (dist < parameters.getInt("repel distance")) {
+          vel += -frc * parameters.getFloat("repel force"); //notice the frc is negative
       }
     }
 
@@ -167,13 +172,12 @@ void Particle::updatePeers(vector <Particle> & allPeers){
 
 //------------------------------------------------------------------
 void Particle::draw(vector <Particle> & allPeers){
-    ofSetColor(parameters.getColor("color"));
-    ofDrawCircle(pos.x, pos.y, scale * 4.0);
+    ofSetColor(color);
+    ofDrawCircle(pos.x, pos.y, scale * parameters.getInt("node size"));
 
     for (unsigned int i = 0; i < peerIds.size(); i++) {
         int peerId = peerIds[i];
         ofPoint & peerPos = allPeers[peerId].pos;
-        ofSetColor(parameters.getColor("color"));
         ofDrawLine(pos.x, pos.y, peerPos.x, peerPos.y);
     }
 }
