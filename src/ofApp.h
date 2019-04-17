@@ -3,6 +3,8 @@
 #include "ofMain.h"
 #include "particle.hpp"
 #include "ofxGui.h"
+#include "ofxKinect.h"
+#include "ofxOpenCv.h"
 
 class ofApp : public ofBaseApp{
 
@@ -10,6 +12,7 @@ public:
   void setup();
   void update();
   void draw();
+  void exit();
   void resetParticles();
 
   void keyPressed(int key);
@@ -38,11 +41,31 @@ public:
   ofParameter <int> gravityDistance;
   ofParameter <float> attractFactor;
   ofParameter <ofColor> color;
-  ofParameterGroup parameters;
+  ofParameterGroup particleParameters;
+
+  ofParameter <int> nearThreshold;
+  ofParameter <int> farThreshold;
+  ofParameterGroup kinectParameters;
 
   vector <Particle> p;
   vector <ofPoint> attractPoints;
   vector <ofPoint> attractPointsWithMovement;
   ofxIntSlider radius;
   ofxPanel gui;
+
+  ofxKinect kinect;
+
+  ofxCvColorImage colorImg;
+
+  ofxCvGrayscaleImage grayImage; // grayscale depth image
+  ofxCvGrayscaleImage grayImageScaled; // scaled
+  ofxCvGrayscaleImage grayThreshNear; // the near thresholded image
+  ofxCvGrayscaleImage grayThreshFar; // the far thresholded image
+
+  ofxCvContourFinder contourFinder;
+
+  bool bThreshWithOpenCV;
+  bool bDrawPointCloud;
+
+  int angle;
 };

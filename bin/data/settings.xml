@@ -10,6 +10,11 @@
 		<gravity>0.0110204</gravity>
 		<gravity_distance>103</gravity_distance>
 		<color>89, 169, 255, 255</color>
+		<attract_factor>12</attract_factor>
 	</particles>
 	<radius>266</radius>
+	<group>
+		<near_threshold>255</near_threshold>
+		<far_threshold>141</far_threshold>
+	</group>
 </group>

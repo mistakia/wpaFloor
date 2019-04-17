@@ -12,6 +12,7 @@
 
 #pragma once
 #include "ofMain.h"
+#include "ofxOpenCv.h"
 
 class Particle{
 
@@ -21,7 +22,7 @@ public:
   void setAttractPoints( vector <ofPoint> * attract );
 
   void reset(int peerId);
-  void update();
+  void update(ofxCvContourFinder & contourFinder);
   void updatePeers(vector <Particle> & allPeers);
   void findPeer(vector <Particle> & allPeers);
   void draw(vector <Particle> & allPeers);
