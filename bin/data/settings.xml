@@ -3,14 +3,14 @@
 	<particles>
 		<drag_min>0.9</drag_min>
 		<drag_max>0.998</drag_max>
-		<noise_time>0.0867347</noise_time>
+		<noise_time>0.0612245</noise_time>
 		<noise_position>0.112245</noise_position>
 		<noise_force>3.34184</noise_force>
-		<connections>7</connections>
-		<gravity>0.0110204</gravity>
-		<gravity_distance>103</gravity_distance>
+		<connections>6</connections>
+		<gravity>0.0180612</gravity>
+		<gravity_distance>106</gravity_distance>
 		<color>89, 169, 255, 255</color>
-		<attract_factor>12</attract_factor>
+		<attract_factor>71.4286</attract_factor>
 	</particles>
 	<radius>266</radius>
 	<group>

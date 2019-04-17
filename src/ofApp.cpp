@@ -90,6 +90,10 @@ void ofApp::resetParticles(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
+    std::stringstream strm;
+    strm << "fps: " << ofGetFrameRate();
+	ofSetWindowTitle(strm.str());
+
     kinect.update();
 
     if(kinect.isFrameNew()) {
