@@ -133,7 +133,7 @@ void Particle::update(ofxCvContourFinder & contourFinder){
 
 void Particle::findPeer(vector <Particle> & allPeers) {
     for (unsigned int i = 0; i < allPeers.size(); i++) {
-        Particle peer = allPeers[i];
+        Particle & peer = allPeers[i];
         if(std::find(peerIds.begin(), peerIds.end(), i) != peerIds.end()) {
             continue;
         }
@@ -150,7 +150,7 @@ void Particle::findPeer(vector <Particle> & allPeers) {
 void Particle::updatePeers(vector <Particle> & allPeers){
     for (unsigned int i = 0; i < peerIds.size(); i++) {
         int peerId = peerIds[i];
-        Particle peer = allPeers[peerId];
+        Particle & peer = allPeers[peerId];
         float distance = (pos - peer.pos).length();
         if (distance > 150) {
             peerIds.erase(std::remove(peerIds.begin(), peerIds.end(), peerId), peerIds.end());
@@ -172,7 +172,7 @@ void Particle::draw(vector <Particle> & allPeers){
 
     for (unsigned int i = 0; i < peerIds.size(); i++) {
         int peerId = peerIds[i];
-        ofPoint peerPos = allPeers[peerId].pos;
+        ofPoint & peerPos = allPeers[peerId].pos;
         ofSetColor(parameters.getColor("color"));
         ofDrawLine(pos.x, pos.y, peerPos.x, peerPos.y);
     }

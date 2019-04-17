@@ -7,6 +7,8 @@ void ofApp::setup(){
 
     ofSetLogLevel(OF_LOG_VERBOSE);
 
+    mainOutputSyphonServer.setName("WPA Floor Output");
+
 	// enable depth->video image calibration
 	kinect.setRegistration(true);
 
@@ -52,7 +54,7 @@ void ofApp::setup(){
 	angle = 0;
 	kinect.setCameraTiltAngle(angle);
 
-    int num = 1000;
+    int num = 900;
     p.assign(num, Particle(particleParameters));
     resetParticles();
 
@@ -162,6 +164,8 @@ void ofApp::draw(){
     for(unsigned int i = 0; i < p.size(); i++){
         p[i].draw(p);
     }
+
+    mainOutputSyphonServer.publishScreen();
 
     // auto draw?
     // should the gui control hiding?
