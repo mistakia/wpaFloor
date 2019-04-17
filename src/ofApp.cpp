@@ -54,7 +54,7 @@ void ofApp::setup(){
 	angle = 0;
 	kinect.setCameraTiltAngle(angle);
 
-    int num = 900;
+    int num = 1200;
     p.assign(num, Particle(particleParameters));
     resetParticles();
 
