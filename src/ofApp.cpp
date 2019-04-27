@@ -3,8 +3,6 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-    ofSetVerticalSync(true);
-
     ofSetLogLevel(OF_LOG_VERBOSE);
 
     mainOutputSyphonServer.setName("WPA Floor Output");
@@ -43,6 +41,8 @@ void ofApp::setup(){
     kinectParameters.setName("kinect");
     kinectParameters.add(nearThreshold.set("near threshold", 230, 0, 255));
     kinectParameters.add(farThreshold.set("far threshold", 70, 0, 255));
+    kinectParameters.add(contourMax.set("contour max", (kinect.width*kinect.height)/2, 1, (kinect.width*kinect.height)/2));
+    kinectParameters.add(contourMin.set("contour min", 20, 1, (kinect.width*kinect.height)/2));
 
     gui.setup();
     gui.add(particleParameters);
@@ -50,7 +50,7 @@ void ofApp::setup(){
 
 	colorImg.allocate(kinect.width, kinect.height);
 	grayImage.allocate(kinect.width, kinect.height);
-    grayImageScaled.allocate(ofGetWidth(), ofGetHeight());
+    grayImageScaled.allocate(ofGetHeight(), ofGetWidth() / 2);
 	grayThreshNear.allocate(kinect.width, kinect.height);
 	grayThreshFar.allocate(kinect.width, kinect.height);
 
@@ -62,7 +62,7 @@ void ofApp::setup(){
 	angle = 0;
 	kinect.setCameraTiltAngle(angle);
 
-    int num = 1400;
+    int num = 1100;
     p.assign(num, Particle(particleParameters));
     resetParticles();
 
@@ -143,11 +143,10 @@ void ofApp::update(){
 
       // update the cv images
       grayImage.flagImageChanged();
+      grayImage.rotate(90, grayImage.getWidth() / 2, grayImage.getHeight() / 2);
       grayImageScaled.scaleIntoMe(grayImage, CV_INTER_CUBIC);
 
-      // find contours which are between the size of 20 pixels and 1/3 the w*h pixels.
-      // also, find holes is set to true so we will get interior contours as well....
-      contourFinder.findContours(grayImageScaled, 10, (kinect.width*kinect.height)/2, 20, false);
+      contourFinder.findContours(grayImageScaled, 10, contourMax, contourMin, false);
 	}
 
         // particle locations updated
@@ -172,10 +171,12 @@ void ofApp::draw(){
     ofBackground(ofColor::black);
 
     //ofSetColor(255, 255, 255);
-    //kinect.drawDepth(0, 0, ofGetWidth(), ofGetHeight());
-    //kinect.draw(0, 0, ofGetWidth(), ofGetHeight());
-    //grayImage.draw(0, 0, ofGetWidth(), ofGetHeight());
-    contourFinder.draw();
+    if (!bHide) {
+        kinect.drawDepth(0, 0, ofGetWidth(), ofGetHeight());
+        kinect.draw(0, 0, ofGetWidth(), ofGetHeight());
+        grayImage.draw(0, 0, ofGetWidth(), ofGetHeight());
+        contourFinder.draw();
+    }
 
     for(unsigned int i = 0; i < p.size(); i++){
         p[i].draw(p);
@@ -185,7 +186,7 @@ void ofApp::draw(){
 
     // auto draw?
     // should the gui control hiding?
-    if(!bHide){
+    if (!bHide){
         gui.draw();
     }
 }
@@ -239,7 +240,7 @@ void ofApp::mouseExited(int x, int y){
 
 //--------------------------------------------------------------
 void ofApp::windowResized(int w, int h){
-
+    resetParticles();
 }
 
 //--------------------------------------------------------------

@@ -54,6 +54,8 @@ public:
     ofParameter <ofColor> color;
     ofParameter <ofColor> color2;
     ofParameter <int> radius;
+    ofParameter <int> contourMax;
+    ofParameter <int> contourMin;
     ofParameterGroup particleParameters;
 
     ofParameter <int> nearThreshold;
