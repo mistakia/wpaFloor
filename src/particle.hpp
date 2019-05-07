@@ -23,7 +23,8 @@ public:
     void setAttractPoints( vector <ofPoint> * attract );
 
     void reset(int peerId);
-    void update(ofxCvContourFinder & contourFinder);
+    void update();
+    void updateContours(ofxCvContourFinder & contourFinder, int offsetX, int offsetY);
     void updatePeers(vector <Particle> & allPeers);
     void findPeer(vector <Particle> & allPeers);
     void draw(vector <Particle> & allPeers);

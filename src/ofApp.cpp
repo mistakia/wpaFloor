@@ -15,6 +15,9 @@ void ofApp::setup(){
 	//kinect.init(false, false); // disable video image (faster fps)
     kinect.open();		// opens first available kinect
 
+	kinect2.init();
+	kinect2.open();
+
     radius.addListener(this, &ofApp::radiusChanged);
     color.addListener(this, &ofApp::colorChanged);
     color2.addListener(this, &ofApp::colorChanged);
@@ -50,11 +53,15 @@ void ofApp::setup(){
 
 	colorImg.allocate(kinect.width, kinect.height);
 	grayImage.allocate(kinect.width, kinect.height);
-    grayImageScaled.allocate(ofGetHeight(), ofGetWidth() / 2);
+    grayImageScaled.allocate(900, ofGetHeight() * 0.5f);
 	grayThreshNear.allocate(kinect.width, kinect.height);
 	grayThreshFar.allocate(kinect.width, kinect.height);
 
-	bThreshWithOpenCV = true;
+    colorImg2.allocate(kinect2.width, kinect2.height);
+	grayImage2.allocate(kinect2.width, kinect2.height);
+    grayImageScaled2.allocate(900, ofGetHeight() * 0.5f);
+	grayThreshNear2.allocate(kinect2.width, kinect2.height);
+	grayThreshFar2.allocate(kinect2.width, kinect2.height);
 
 	ofSetFrameRate(60);
 
@@ -62,7 +69,7 @@ void ofApp::setup(){
 	angle = 0;
 	kinect.setCameraTiltAngle(angle);
 
-    int num = 1100;
+    int num = 400;
     p.assign(num, Particle(particleParameters));
     resetParticles();
 
@@ -113,7 +120,6 @@ void ofApp::update(){
 	ofSetWindowTitle(strm.str());
 
     kinect.update();
-
     if(kinect.isFrameNew()) {
 
       // load grayscale depth image from the kinect source
@@ -121,47 +127,55 @@ void ofApp::update(){
 
       // we do two thresholds - one for the far plane and one for the near plane
       // we then do a cvAnd to get the pixels which are a union of the two thresholds
-      if(bThreshWithOpenCV) {
-        grayThreshNear = grayImage;
-        grayThreshFar = grayImage;
-        grayThreshNear.threshold(kinectParameters.getInt("near threshold"), true);
-        grayThreshFar.threshold(kinectParameters.getInt("far threshold"));
-        cvAnd(grayThreshNear.getCvImage(), grayThreshFar.getCvImage(), grayImage.getCvImage(), NULL);
-      } else {
-
-        // or we do it ourselves - show people how they can work with the pixels
-        ofPixels & pix = grayImage.getPixels();
-        int numPixels = pix.size();
-        for(int i = 0; i < numPixels; i++) {
-          if(pix[i] < kinectParameters.getInt("near threshold") && pix[i] > kinectParameters.getInt("far threshold")) {
-            pix[i] = 255;
-          } else {
-            pix[i] = 0;
-          }
-        }
-      }
+      grayThreshNear = grayImage;
+      grayThreshFar = grayImage;
+      grayThreshNear.threshold(kinectParameters.getInt("near threshold"), true);
+      grayThreshFar.threshold(kinectParameters.getInt("far threshold"));
+      cvAnd(grayThreshNear.getCvImage(), grayThreshFar.getCvImage(), grayImage.getCvImage(), NULL);
 
       // update the cv images
       grayImage.flagImageChanged();
-      grayImage.rotate(90, grayImage.getWidth() / 2, grayImage.getHeight() / 2);
+      grayImage.rotate(180, grayImage.getWidth() / 2, grayImage.getHeight() / 2);
       grayImageScaled.scaleIntoMe(grayImage, CV_INTER_CUBIC);
 
       contourFinder.findContours(grayImageScaled, 10, contourMax, contourMin, false);
 	}
 
-        // particle locations updated
+    kinect2.update();
+    if(kinect2.isFrameNew()) {
+
+      // load grayscale depth image from the kinect source
+      grayImage2.setFromPixels(kinect2.getDepthPixels());
+
+      // we do two thresholds - one for the far plane and one for the near plane
+      // we then do a cvAnd to get the pixels which are a union of the two thresholds
+      grayThreshNear2 = grayImage2;
+      grayThreshFar2 = grayImage2;
+      grayThreshNear2.threshold(kinectParameters.getInt("near threshold"), true);
+      grayThreshFar2.threshold(kinectParameters.getInt("far threshold"));
+      cvAnd(grayThreshNear2.getCvImage(), grayThreshFar2.getCvImage(), grayImage2.getCvImage(), NULL);
+      // update the cv images
+      grayImage2.flagImageChanged();
+      //grayImage2.rotate(90, grayImage2.getWidth() / 2, grayImage2.getHeight() / 2);
+      grayImageScaled2.scaleIntoMe(grayImage2, CV_INTER_CUBIC);
+
+      contourFinder2.findContours(grayImageScaled2, 10, contourMax, contourMin, false);
+	}
+
+    // particle locations updated
     for(unsigned int i = 0; i < p.size(); i++){
-        p[i].update(contourFinder);
+        p[i].update();
+        p[i].updateContours(contourFinder, 250, 100);
+        p[i].updateContours(contourFinder2, 250, ofGetHeight() * 0.5f);
     }
 
-    // check if peers are within distance
     for (unsigned int i = 0; i < p.size(); i++) {
         p[i].updatePeers(p);
     }
 
     //lets add a bit of movement to the attract points
     for(unsigned int i = 0; i < attractPointsWithMovement.size(); i++){
-         attractPointsWithMovement[i].x = attractPoints[i].x + ofSignedNoise(i * 10, ofGetElapsedTimef()) * particleParameters.getFloat("attract factor");
+        attractPointsWithMovement[i].x = attractPoints[i].x + ofSignedNoise(i * 10, ofGetElapsedTimef()) * particleParameters.getFloat("attract factor");
         attractPointsWithMovement[i].y = attractPoints[i].y + ofSignedNoise(i * -10, ofGetElapsedTimef()) * particleParameters.getFloat("attract factor");
     }
 }
@@ -172,10 +186,15 @@ void ofApp::draw(){
 
     //ofSetColor(255, 255, 255);
     if (!bHide) {
-        kinect.drawDepth(0, 0, ofGetWidth(), ofGetHeight());
-        kinect.draw(0, 0, ofGetWidth(), ofGetHeight());
-        grayImage.draw(0, 0, ofGetWidth(), ofGetHeight());
-        contourFinder.draw();
+        //kinect.drawDepth(250, 200, kinect.width, kinect.height);
+        //kinect.draw(250, 200, kinect.width, kinect.height);
+        grayImage.draw(250, 200, grayImage.width, grayImage.height);
+        contourFinder.draw(250, 100);
+
+        //kinect2.drawDepth(250, ofGetHeight() * 0.5f, kinect2.width, kinect2.height);
+        //kinect2.draw(250, ofGetHeight() * 0.5f, kinect2.width, kinect2.height);
+        grayImage2.draw(250, ofGetHeight() * 0.5f, grayImage2.width, grayImage2.height);
+        contourFinder2.draw(250, ofGetHeight() * 0.5f);
     }
 
     for(unsigned int i = 0; i < p.size(); i++){

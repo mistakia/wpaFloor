@@ -3,20 +3,24 @@
 	<particles>
 		<drag_min>0.9</drag_min>
 		<drag_max>0.998</drag_max>
-		<noise_time>0.0612245</noise_time>
-		<noise_position>0.112245</noise_position>
-		<noise_force>2.65306</noise_force>
-		<connections>8</connections>
-		<gravity>0.0140816</gravity>
-		<gravity_distance>50</gravity_distance>
-		<color>128, 204, 208, 255</color>
-		<attract_factor>107.143</attract_factor>
-		<repel_distance>105</repel_distance>
-		<repel_force>4.77041</repel_force>
-		<node_size>4</node_size>
-		<color_2>30, 39, 78, 255</color_2>
+		<noise_time>0.2</noise_time>
+		<noise_position>0.01</noise_position>
+		<noise_force>1.03</noise_force>
+		<connections>7</connections>
+		<gravity>0.015</gravity>
+		<gravity_distance>100</gravity_distance>
+		<color>84, 153, 255, 255</color>
+		<attract_factor>12</attract_factor>
+		<repel_distance>232</repel_distance>
+		<repel_force>5</repel_force>
+		<node_size>6</node_size>
+		<color_2>236, 255, 251, 255</color_2>
 		<connection_length>150</connection_length>
-		<radius>244</radius>
+		<radius>240</radius>
+		<connections_Max>6</connections_Max>
+		<connections_Min>6</connections_Min>
+		<node_size_min>4</node_size_min>
+		<node_size_max>4</node_size_max>
 	</particles>
 	<group>
 		<near_threshold>255</near_threshold>
@@ -24,6 +28,8 @@
 	</group>
 	<kinect>
 		<near_threshold>230</near_threshold>
-		<far_threshold>70</far_threshold>
+		<far_threshold>104</far_threshold>
+		<contour_max>153600</contour_max>
+		<contour_min>20</contour_min>
 	</kinect>
 </group>

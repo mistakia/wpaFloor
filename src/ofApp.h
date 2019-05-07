@@ -32,7 +32,6 @@ public:
     void radiusChanged(int & radius);
 
     bool bHide;
-    bool bThreshWithOpenCV;
     int angle;
     vector <Particle> p;
     vector <ofPoint> attractPoints;
@@ -65,12 +64,20 @@ public:
     ofxPanel gui;
 
     ofxSyphonServer mainOutputSyphonServer;
-    ofxKinect kinect;
 
+    ofxKinect kinect;
     ofxCvColorImage colorImg;
     ofxCvGrayscaleImage grayImage; // grayscale depth image
     ofxCvGrayscaleImage grayImageScaled; // scaled
     ofxCvGrayscaleImage grayThreshNear; // the near thresholded image
     ofxCvGrayscaleImage grayThreshFar; // the far thresholded image
     ofxCvContourFinder contourFinder;
+
+	ofxKinect kinect2;
+    ofxCvColorImage colorImg2;
+    ofxCvGrayscaleImage grayImage2; // grayscale depth image
+    ofxCvGrayscaleImage grayImageScaled2; // scaled
+    ofxCvGrayscaleImage grayThreshNear2; // the near thresholded image
+    ofxCvGrayscaleImage grayThreshFar2; // the far thresholded image
+    ofxCvContourFinder contourFinder2;
 };

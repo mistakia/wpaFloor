@@ -43,7 +43,7 @@ void Particle::reset(int peerId){
 }
 
 //------------------------------------------------------------------
-void Particle::update(ofxCvContourFinder & contourFinder){
+void Particle::update(){
     vel *= drag;
 
     if( attractPoints ){
@@ -83,38 +83,19 @@ void Particle::update(ofxCvContourFinder & contourFinder){
 
     }
 
-    if (contourFinder.blobs.size()) {
-      int numBlobs = contourFinder.blobs.size();
-      for (int i = 0; i < numBlobs; ++i) {
-        ofxCvBlob & blob = contourFinder.blobs[i];
-        ofPoint attractPt(blob.centroid.x, blob.centroid.y);
+    ofPoint attractPt(ofGetMouseX(), ofGetMouseY());
+    frc = attractPt-pos;
 
-        frc = attractPt-pos;
+    //let get the distance and only repel points close to the mouse
+    float dist = frc.length();
+    frc.normalize();
 
-        //let get the distance and only repel points close to the mouse
-        float dist = frc.length();
-        frc.normalize();
-
-        if (dist < parameters.getInt("repel distance")) {
-            vel += -frc * parameters.getFloat("repel force"); //notice the frc is negative
-        }
-      }
-    } else {
-      ofPoint attractPt(ofGetMouseX(), ofGetMouseY());
-      frc = attractPt-pos;
-
-      //let get the distance and only repel points close to the mouse
-      float dist = frc.length();
-      frc.normalize();
-
-      if (dist < parameters.getInt("repel distance")) {
-          vel += -frc * parameters.getFloat("repel force"); //notice the frc is negative
-      }
+    if (dist < parameters.getInt("repel distance")) {
+        vel += -frc * parameters.getFloat("repel force"); //notice the frc is negative
     }
 
     // UPDATE OUR POSITION
     pos += vel;
-
 
     // (optional) LIMIT THE PARTICLES TO STAY ON SCREEN
     //we could also pass in bounds to check - or alternatively do this at the ofApp level
@@ -134,6 +115,26 @@ void Particle::update(ofxCvContourFinder & contourFinder){
         vel.y *= -1.0;
     }
 
+}
+
+void Particle::updateContours(ofxCvContourFinder & contourFinder, int offsetX, int offsetY) {
+    if (contourFinder.blobs.size()) {
+        int numBlobs = contourFinder.blobs.size();
+        for (int i = 0; i < numBlobs; ++i) {
+            ofxCvBlob & blob = contourFinder.blobs[i];
+            ofPoint attractPt(blob.centroid.x + offsetX, blob.centroid.y + offsetY);
+
+            frc = attractPt-pos;
+
+            //let get the distance and only repel points close to the mouse
+            float dist = frc.length();
+            frc.normalize();
+
+            if (dist < parameters.getInt("repel distance")) {
+                vel += -frc * parameters.getFloat("repel force"); //notice the frc is negative
+            }
+        }
+    }
 }
 
 void Particle::findPeer(vector <Particle> & allPeers) {
